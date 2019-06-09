@@ -25,10 +25,12 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
     def endElement(self, name):
         """Closing tag of element"""
         if name == self._current_tag:
-            self._values[name] = ' '.join(self._buffer)
+            if not self._values.keys().__contains__(name):
+                self._values[name] = ' '.join(self._buffer)
 
         if name == 'page':
             self._pages.append((self._values['ns'], self._values['id'], self._values['title'], self._values['text']))
+            self._values.clear()
 
     @property
     def pages(self):

@@ -23,21 +23,20 @@ status = dict()
 
 
 def main():
-    dbList = readFromDb()
-    status['start'] = "Started..."
-    # Чтение из архива bz2, Запускает подпроцесс bzcat.
-    #
-    #
+    # dbList = readFromDb()
+    # status['start'] = "Started..."
+    # # Чтение из архива bz2, Запускает подпроцесс bzcat.
+    # #
+    # #
     badDocs = get_docs(data_path, 100)
-    goodDocs = docs_to_docs_with_unique_words(badDocs)
+    # goodDocs = docs_to_docs_with_unique_words(badDocs)
+    #
+    # with open('file.txt', 'w') as the_file:
+    #     for stroka in goodDocs:
+    #         the_file.write(stroka + os.linesep)
 
-    with open('file.txt', 'w') as the_file:
-        for stroka in goodDocs:
-            the_file.write(stroka + os.linesep)
-
-    # goodDocs = list()
-    # f = open("file.txt", "r")
-    # goodDocs = f.read().splitlines()
+    f = open("file.txt", "r")
+    goodDocs = f.read().splitlines()
     # print(goodDocs)
 
     listOfLists = getting_list_of_list_from_docs(goodDocs)
@@ -75,7 +74,7 @@ def main():
     # LSI
     dct = Dictionary(listOfLists)
     corpus = [dct.doc2bow(line) for line in listOfLists]
-    lsi_model = LsiModel(corpus=corpus, id2word=dct, num_topics=7, decay=0.5)
+    lsi_model = LsiModel(corpus=corpus, id2word=dct, num_topics=100, decay=0.5)
 # View Topics
     from pprint import pprint
     pprint(lsi_model.print_topics(-1))
@@ -117,7 +116,7 @@ def docs_to_docs_with_unique_words(docList) -> list:
     listOfDocs = list()
     status['words'] = "Words processing"
     for doc in docList:
-        slova = format_text(doc).split()
+        slova = doc.split()
         wordNumber = 0
         listSlov = list()
         newDoc = ""
@@ -138,7 +137,7 @@ def getting_list_of_list_from_docs(listOfDocs):
     lisOfLists = list(list())
     status['words'] = "Words processing"
     for doc in listOfDocs:
-        slova = format_text(doc).split()
+        slova = doc.split()
         wordNumber = 0
         listSlov = list()
         newDoc = ""
