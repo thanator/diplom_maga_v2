@@ -28,7 +28,7 @@ def main():
     # # Чтение из архива bz2, Запускает подпроцесс bzcat.
     # #
     # #
-    badDocs = get_docs(data_path, 100)
+    # badDocs = get_docs(data_path, 100)
     # goodDocs = docs_to_docs_with_unique_words(badDocs)
     #
     # with open('file.txt', 'w') as the_file:
@@ -39,7 +39,7 @@ def main():
     goodDocs = f.read().splitlines()
     # print(goodDocs)
 
-    listOfLists = getting_list_of_list_from_docs(goodDocs)
+    # listOfLists = getting_list_of_list_from_docs(goodDocs)
     # dictionary = Dictionary(listOfLists)
     # bow_corpus = BoWCorpus(goodDocs, dictionary)
     # #
@@ -61,23 +61,35 @@ def main():
     # print(dictionary.token2id)
 
     # TFIDF
-    # mydict = Dictionary([simple_preprocess(line) for line in goodDocs])
-    # corpus = [mydict.doc2bow(simple_preprocess(line)) for line in goodDocs]
-    # # Show the Word Weights in Corpus
-    # for doc in corpus:
-    #     print([[mydict[id], freq] for id, freq in doc])
-    # tfidf = TfidfModel(corpus, smartirs='ntc')
-    # # Show the TF-IDF weights
-    # for doc in tfidf[corpus]:
-    #     print([[mydict[id], np.around(freq, decimals=2)] for id, freq in doc])
+    mydict = Dictionary([simple_preprocess(line) for line in goodDocs])
+    corpus = [mydict.doc2bow(simple_preprocess(line)) for line in goodDocs]
+    # Show the Word Weights in Corpus
+    for doc in corpus:
+        print([[mydict[id], freq] for id, freq in doc])
+    tfidf = TfidfModel(corpus, smartirs='ntc')
+    from gensim.models.tfidfmodel import smartirs_normalize
+    query = np.zeros(len(tfidf.dfs))
+    for item in corpus[1]:
+        query[item[0]] = item[1]
+    document = np.zeros(len(tfidf.dfs))
+    for item in corpus[2]:
+        document[item[0]] = item[1]
+    query = smartirs_normalize(query, norm_scheme='c')
+    document = smartirs_normalize(document, norm_scheme='c')
+    subprocess.call('clear' if os.name == 'posix' else 'cls')
+    print(np.dot(query,document))
+    # Show the TF-IDF weights
+    # print('\n___________', goodDocs[1], '\n___________', corpus[1], '\n___________', tfidf[corpus[1]])
+    # for doc in tfidf[corpus[0]]:
+    #    print([[mydict[id], np.around(freq, decimals=2)] for id, freq in doc])
 
     # LSI
-    dct = Dictionary(listOfLists)
-    corpus = [dct.doc2bow(line) for line in listOfLists]
-    lsi_model = LsiModel(corpus=corpus, id2word=dct, num_topics=100, decay=0.5)
-# View Topics
-    from pprint import pprint
-    pprint(lsi_model.print_topics(-1))
+    # dct = Dictionary(listOfLists)
+    # corpus = [dct.doc2bow(line) for line in listOfLists]
+    # lsi_model = LsiModel(corpus=corpus, id2word=dct, num_topics=100, decay=0.5)
+    # # View Topics
+    # from pprint import pprint
+    # pprint(lsi_model.print_topics(-1))
 
 
 # [5][3]
